@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Syncfusion Spring Boot App</title>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet" />
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+</head>
+<body>
+<div>
+    <input type="text" id="searchInput" placeholder="Search by Customer Name" />
+    <button id="searchButton">Search</button>
+</div>
+<div id="Grid"></div>
+
+<script>
+    const grid = new ej.grids.Grid({
+        dataSource: [],
+        allowSorting: true,
+        columns: [
+            { field: 'orderId', headerText: 'Order ID', width: 120 },
+            { field: 'customerName', headerText: 'Customer Name', width: 150 },
+            { field: 'freight', headerText: 'Freight', width: 100, format: 'C2' },
+            { field: 'shipCountry', headerText: 'Ship Country', width: 150 }
+        ]
+    });
+    grid.appendTo('#Grid');
+
+    function fetchOrders(searchTerm)
+    {
+        const url = searchTerm ? `/api/orders?search=${searchTerm}` : '/api/orders';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                grid.dataSource = data;
+                grid.refresh();
+            });
+    }
+
+    fetchOrders();
+
+    document.getElementById('searchButton').addEventListener('click', () => {
+        const searchTerm = document.getElementById('searchInput').value;
+        fetchOrders(searchTerm);
+    });
+</script>
+</body>
+</html>
